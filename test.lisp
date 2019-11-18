@@ -9,13 +9,13 @@
 ;; test
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(zreclos:defclass a-class (standard-class)
+(cl:defclass a-class (standard-class)
   ()
   (:metaclass standard-class))
-(zreclos:defclass b-class (standard-class)
+(cl:defclass b-class (standard-class)
   ()
   (:metaclass standard-class))
-(zreclos:defclass c-class (a-class b-class)
+(cl:defclass c-class (a-class b-class)
   ()
   (:metaclass standard-class))
 (defmethod validate-superclass ((c a-class) (s standard-class)) T)
