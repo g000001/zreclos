@@ -2,8 +2,15 @@
 
 (cl:in-package zreclos.meta)
 
+
+(in-syntax *zreclos-syntax*)
+
+
 (def-suite zreclos)
+
+
 (in-suite zreclos)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; test
@@ -12,28 +19,40 @@
 (cl:defclass a-class (standard-class)
   ()
   (:metaclass standard-class))
+
+
 (cl:defclass b-class (standard-class)
   ()
   (:metaclass standard-class))
+
+
 (cl:defclass c-class (a-class b-class)
   ()
   (:metaclass standard-class))
+
+
 (defmethod validate-superclass ((c a-class) (s standard-class)) T)
+
+
 (defmethod validate-superclass ((c b-class) (s standard-class)) T)
 
+
 (defconstant <a>
-  (zreclos:defclass a ()
+  (~defclass a ()
     ()
     (:metaclass a-class)))
 
+
 (defconstant <b>
-  (zreclos:defclass b ()
+  (~defclass b ()
     ()
     (:metaclass b-class)))
 
+
 (defconstant <c>
-  (zreclos:defclass c (a b)
+  (~defclass c (a b)
     ()))
+
 
 (test |compute-metaclass test|
   (defparameter *z* (gensym "z"))
@@ -52,9 +71,29 @@
   (is (eq (class-of (ensure-class *y*))
           (find-class 'cl:standard-class))))
 
+
+(test |self-referent-class test|
+  (defun make-point (x y)
+    (list x y))
+  (~defclass (horizontal-line :stklos) (~self-referent-object)
+    ((x1 :accessor x1 :initarg :x1 :type real)
+     (x2 :accessor x2 :initarg :x2 :type real)
+     (y :accessor y :initarg :y :type real)
+     (point1 :initform (make-point (x1 self)
+                                   (y self)))
+     (point2 :initform (make-point (x2 self)
+                                   (y self)))))
+  (let ((obj (make-instance 'horizontal-line :x1 1 :x2 2 :y 3)))
+    (is (equal 1 (slot-value obj 'x1)))
+    (is (equal 2 (slot-value obj 'x2)))
+    (is (equal '(1 3) (slot-value obj 'point1)))
+    (is (equal '(2 3) (slot-value obj 'point2)))))
+
+
 #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||;
 (run!)
 ;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+
 
 ;;; *EOF*
 

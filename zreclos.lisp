@@ -1,109 +1,109 @@
 ;;;; zreclos.lisp -*- Mode: Lisp;-*- 
-
 (cl:in-package :zreclos.meta)
+(in-syntax *zreclos-syntax*)
 
 
-(defclass zreclos:operating-class (standard-class)
+(defclass ~operating-class (standard-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:self-referent-operating-class
-          (zreclos:operating-class
-           zreclos:self-referent-class)
+'(defclass ~self-referent-operating-class
+          (~operating-class
+           ~self-referent-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:lazy-class
-          (zreclos:self-referent-operating-class)
+'(defclass ~lazy-class
+          (~self-referent-operating-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:attributed-class
-          (zreclos:self-referent-operating-class)
+'(defclass ~attributed-class
+          (~self-referent-operating-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:attributed-lazy-class
-          (zreclos:attributed-class
-           zreclos:lazy-class)
+'(defclass ~attributed-lazy-class
+          (~attributed-class
+           ~lazy-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:constrained-class
-          (zreclos:self-referent-operating-class)
+'(defclass ~constrained-class
+          (~self-referent-operating-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:constrained-lazy-class
-          (zreclos:constrained-class
-           zreclos:lazy-class)
+'(defclass ~constrained-lazy-class
+          (~constrained-class
+           ~lazy-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:self-referent-class (standard-class)
+(defclass ~self-referent-class (standard-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:instance-recording-class (standard-class)
+'(defclass ~instance-recording-class (standard-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:ir-operating-class
-          (zreclos:instance-recording-class
-           zreclos:operating-class)
+'(defclass ~ir-operating-class
+          (~instance-recording-class
+           ~operating-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:ir-self-referent-operating-class
-          (zreclos:instance-recording-class 
-           zreclos:self-referent-operating-class)
+'(defclass ~ir-self-referent-operating-class
+          (~instance-recording-class 
+           ~self-referent-operating-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:ir-lazy-class
-          (zreclos:ir-self-referent-operating-class
-           zreclos:lazy-class)
+'(defclass ~ir-lazy-class
+          (~ir-self-referent-operating-class
+           ~lazy-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:ir-attributed-lazy-class
-          (zreclos:ir-lazy-class
-           zreclos:ir-attributed-class
-           zreclos:attributed-lazy-class)
+'(defclass ~ir-attributed-lazy-class
+          (~ir-lazy-class
+           ~ir-attributed-class
+           ~attributed-lazy-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:ir-attributed-class
-          (zreclos:instance-recording-class
-           zreclos:attributed-class)
+'(defclass ~ir-attributed-class
+          (~instance-recording-class
+           ~attributed-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:ir-constrained-class
-          (zreclos:instance-recording-class
-           zreclos:constrained-class)
+'(defclass ~ir-constrained-class
+          (~instance-recording-class
+           ~constrained-class)
   ()
   (:metaclass standard-class))
 
 
-(defclass zreclos:ir-constrained-lazy-class
-          (zreclos:ir-constrained-class
-           zreclos:constrained-lazy-class
-           zreclos:ir-attributed-lazy-class)
+'(defclass ~ir-constrained-lazy-class
+          (~ir-constrained-class
+           ~constrained-lazy-class
+           ~ir-attributed-lazy-class)
   ()
   (:metaclass standard-class))
 

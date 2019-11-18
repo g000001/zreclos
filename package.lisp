@@ -25,6 +25,7 @@
    constrained-class
    constrained-lazy-class
    self-referent-class
+   self-referent-object
    instance-recording-class
    ir-operating-class
    ir-self-referent-operating-class

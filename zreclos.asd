@@ -8,9 +8,11 @@
   :depends-on (:fiveam
                :closer-mop)
   :components ((:file "package")
-               #|(:file "readtable")|#
+               (:file "readtable")
                (:file "metaclass-inheritance")
                (:file "zreclos")
+               #+lispworks 
+               (:file "self-referent-class")
                (:file "test")))
 
 

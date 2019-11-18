@@ -1,6 +1,8 @@
 ;;;; Zillion Random Extentions of Common Lisp Object System
 (cl:in-package zreclos.meta)
 
+(in-syntax *zreclos-syntax*)
+
 ;;;;
 ;;;; Metaclass Inheritance: ECLOS 
 ;;;;
@@ -49,7 +51,7 @@
 
 
 #+lispworks
-(defmacro zreclos:defclass-eclos (name superclasses slots &rest class-options)
+(defmacro ~defclass-eclos (name superclasses slots &rest class-options)
   (let* ((metaclass-name (cadr (find :metaclass class-options :key #'car)))
          (metaclass (compute-metaclass (mapcar #'ensure-class-soft superclasses)
                                        :default-metaclass-name metaclass-name))
@@ -106,7 +108,7 @@
 
 
 #+lispworks
-(defmacro zreclos:defclass-stklos (name superclasses slots &rest class-options)
+(defmacro ~defclass-stklos (name superclasses slots &rest class-options)
   (let* ((metaclass (ensure-metaclass (mapcar (lambda (s)
                                                 (or (find-class s nil)
                                                     (make-instance 'standard-class :name s)))
@@ -122,14 +124,14 @@
                            class-options)))
 
 #+lispworks
-(defmacro zreclos:defclass (name superclasses slots &rest class-options)
+(defmacro ~defclass (name superclasses slots &rest class-options)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (,@(etypecase name
-          (atom `(zreclos:defclass-eclos ,name))
+          (atom `(~defclass-eclos ,name))
           ((cons * (cons (eql :eclos) null))
-           `(zreclos:defclass-eclos ,(car name)))
+           `(~defclass-eclos ,(car name)))
           ((cons * (cons (eql :stklos) null))
-           `(zreclos:defclass-stklos ,(car name))))  
+           `(~defclass-stklos ,(car name))))  
       ,superclasses
       ,slots
       ,@class-options)))

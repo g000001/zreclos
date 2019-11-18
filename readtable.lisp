@@ -1,14 +1,25 @@
 ;;;; readtable.lisp -*- Mode: Lisp;-*- 
 
-(cl:in-package :zreclos.internal)
-(in-readtable :common-lisp)
+(cl:in-package :zreclos.meta)
 
 
-(defreadtable :zreclos
-  (:merge :standard)
-  (:macro-char char fctn opt...)
-  (:syntax-from readtable to-char from-char)
-  (:case :upcase))
+(defmacro in-syntax (readtable)
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (setq *readtable* ,readtable)))
+
+
+(defvar *zreclos-syntax* (copy-readtable nil))
+
+
+(in-syntax *zreclos-syntax*)
+
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun zreclos-prefix (srm chr)
+    (declare (ignore chr))
+    (let ((*package* (find-package 'zreclos)))
+      (read srm)))
+  (set-macro-character #\~ #'zreclos-prefix))
 
 
 ;;; *EOF*
