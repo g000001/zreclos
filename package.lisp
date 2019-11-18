@@ -15,7 +15,8 @@
   (:export
    defclass
    defclass-eclos
-   defclass-stklos)
+   defclass-stklos
+   self)
   (:export
    operating-class
    self-referent-operating-class

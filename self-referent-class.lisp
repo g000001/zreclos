@@ -8,7 +8,7 @@
 
 (defun make-creator-function-form (slot-form)
   (let ((name (car slot-form)))
-    `(,name (self) (slot-value self ',name))))
+    `(,name (~self) (slot-value ~self ',name))))
 
 
 (defmethod clos::expand-defclass 
@@ -23,6 +23,7 @@
 (defclass ~self-referent-object (standard-object) 
   ()
   (:metaclass ~self-referent-class))
+
 
 (defmethod shared-initialize :around ((instance ~self-referent-object) slot-names &rest initargs)
   (let ((*self-referent-object-self* instance))
@@ -43,16 +44,25 @@
       (traverse tree))
     (nreverse list)))
 
+
 (defun non-trivial-initform-initfunction-p (initform)
+  #+lispworks7.1
   (loop :for (decl ntifif) :on (flatten initform)
-        :thereis (eq 'clos::non-trivial-initform-initfunction ntifif)))
+        :thereis (and (eq 'declare decl)
+                      (eq 'clos::non-trivial-initform-initfunction ntifif)))
+  #+lispworks7.0
+  (let ((x initform))
+    (and (consp x)
+         (eq 'function (car x))
+         (eq 'lambda (caadr x)))))
+
 
 (defun self-referent-class-initfunction-form (ifform)
   (if (non-trivial-initform-initfunction-p ifform)
       (destructuring-bind (function (lambda arg &body body))
                           ifform
         (declare (ignore arg))
-        `(,function (,lambda (&aux (self *self-referent-object-self*)) 
+        `(,function (,lambda (&aux (~self *self-referent-object-self*)) 
                              (declare (special *self-referent-object-self*))
                              ,@body)))
       ifform))
