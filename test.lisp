@@ -9,9 +9,9 @@
 ;; test
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(zreclos:defclass a-class (standard-class) ())
-(zreclos:defclass b-class (standard-class) ())
-(zreclos:defclass c-class (a-class b-class) ())
+(zreclos:defclass (a-class :stklos) (standard-class) ())
+(zreclos:defclass (b-class :stklos) (standard-class) ())
+(zreclos:defclass (c-class :stklos) (a-class b-class) ())
 (defmethod validate-superclass ((c a-class) (s standard-class)) T)
 (defmethod validate-superclass ((c b-class) (s standard-class)) T)
 
