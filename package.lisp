@@ -20,6 +20,7 @@
   (:export
    operating-class
    self-referent-operating-class
+   self-referent-operating-object
    lazy-class
    attributed-class
    attributed-lazy-class
@@ -28,6 +29,9 @@
    self-referent-class
    self-referent-object
    instance-recording-class
+   instance-recording-object
+   instance-recording-structure-class
+   scan-direct-instances
    ir-operating-class
    ir-self-referent-operating-class
    ir-lazy-class

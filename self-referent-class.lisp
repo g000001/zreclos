@@ -47,8 +47,8 @@
 
 (defun non-trivial-initform-initfunction-p (initform)
   #+lispworks7.1
-  (loop :for (decl ntifif) :on (flatten initform)
-        :thereis (and (eq 'declare decl)
+  (loop :for (name ntifif) :on (flatten initform)
+        :thereis (and (eq 'hcl:lambda-name name)
                       (eq 'clos::non-trivial-initform-initfunction ntifif)))
   #+lispworks7.0
   (let ((x initform))
