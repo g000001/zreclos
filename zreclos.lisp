@@ -58,11 +58,6 @@
   (:metaclass cl:standard-class))
 
 
-(defclass ~instance-recording-object (standard-object)
-  ()
-  (:metaclass ~instance-recording-class))
-
-
 '(defclass ~ir-operating-class
           (~instance-recording-class
            ~operating-class)

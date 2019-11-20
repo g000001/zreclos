@@ -54,7 +54,8 @@
 
 (defconstant <c>
   (~defclass c (a b)
-    ()))
+    ()
+    (:metaclass c-class))) ;TODO
 
 
 (test |compute-metaclass test|

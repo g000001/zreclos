@@ -24,6 +24,11 @@
   T)
 
 
+(defclass ~instance-recording-object (standard-object)
+  ()
+  (:metaclass ~instance-recording-class))
+
+
 (defmethod make-instance :around 
            ((class ~instance-recording-class) &rest initargs)
   (let* ((inst (call-next-method))
