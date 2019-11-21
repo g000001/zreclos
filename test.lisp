@@ -37,6 +37,9 @@
 (defmethod validate-superclass ((c b-class) (s standard-class)) T)
 
 
+(defmethod validate-superclass ((c c-class) (s standard-class)) T)
+
+
 (defconstant <a>
   (~defclass a ()
     ()
