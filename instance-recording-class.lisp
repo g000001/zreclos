@@ -13,10 +13,10 @@
   (apply #'make-array size :element-type 'sb-ext:weak-pointer initargs))
 
 
-(defclass ~instance-recording-class (cl:standard-class)
+(defclass ~instance-recording-class (standard-class)
   ((instance-record :initform (make-weak-vector 0 :adjustable T :fill-pointer 0)
                     :accessor ~class-instance-record))
-  (:metaclass cl:standard-class))
+  (:metaclass standard-class))
 
 
 (defmethod validate-superclass
