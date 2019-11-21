@@ -6,13 +6,15 @@
 (defsystem :zreclos
   :serial t
   :depends-on (:fiveam
-               :closer-mop)
+               :closer-mop
+               :series)
   :components ((:file "package")
                (:file "readtable")
                (:file "metaclass-inheritance")
                (:file "zreclos")
                #+lispworks 
                (:file "self-referent-class")
+               (:file "instance-recording-class")
                (:file "test")))
 
 

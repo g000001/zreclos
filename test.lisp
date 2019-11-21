@@ -26,15 +26,18 @@
   (:metaclass standard-class))
 
 
+(defmethod validate-superclass ((c a-class) (s standard-class)) T)
+
+
+(defmethod validate-superclass ((c b-class) (s standard-class)) T)
+
+
 (cl:defclass c-class (a-class b-class)
   ()
   (:metaclass standard-class))
 
 
-(defmethod validate-superclass ((c a-class) (s standard-class)) T)
-
-
-(defmethod validate-superclass ((c b-class) (s standard-class)) T)
+(defmethod validate-superclass ((c c-class) (s standard-class)) T)
 
 
 (defmethod validate-superclass ((c c-class) (s standard-class)) T)
@@ -54,7 +57,8 @@
 
 (defconstant <c>
   (~defclass c (a b)
-    ()))
+    ()
+    (:metaclass c-class))) ;TODO
 
 
 (test |compute-metaclass test|
@@ -91,6 +95,18 @@
     (is (equal 2 (slot-value obj 'x2)))
     (is (equal '(1 3) (slot-value obj 'point1)))
     (is (equal '(2 3) (slot-value obj 'point2)))))
+
+
+(test |instance-recording-class test|
+  (~defclass irobj (~instance-recording-object) ())
+  (~reset-instance-record (find-class 'irobj))
+  (let ((size 100))
+    (dotimes (i size)
+      (make-instance 'irobj))
+    (is (= size
+           (series:collect-length
+            (~scan-direct-instances
+             (find-class 'irobj)))))))
 
 
 #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||;
