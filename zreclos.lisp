@@ -36,7 +36,7 @@
 
 
 '(defclass ~constrained-class
-          (~self-referent-operating-class)
+          (~attributed-class)
   ()
   (:metaclass standard-class))
 
@@ -85,9 +85,9 @@
 
 
 '(defclass ~ir-attributed-lazy-class
-          (~ir-lazy-class
-           ~ir-attributed-class
-           ~attributed-lazy-class)
+          (~ir-attributed-class
+           ~attributed-lazy-class
+           ~ir-lazy-class)
   ()
   (:metaclass standard-class))
 

@@ -40,11 +40,11 @@
       (if (and (not (null | T |))
                (every #'subtypep | T | (cdr | T |)))
           ;;then the root of T is the metaclass of C
-          (car | T |)
+          (car (reverse | T |))
           ;;otherwise STANDARD-CLASS is the metaclass of C.
           (find-class 'standard-class)))))
 
-
+ 
 (defun ensure-class-soft (name)
   (or (find-class name nil)
       (make-instance 'standard-class :name name)))
