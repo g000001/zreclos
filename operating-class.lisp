@@ -6,8 +6,9 @@
 
 
 (defclass ~operating-class (standard-class)
-  ((walkers :initform `((~operating-object mapslots . walkslots))
-            :accessor class-walkers))
+  ((container-types :initform '(~operating-object)
+                    :accessor class-container-types
+                    :initarg :container-types))
   (:metaclass standard-class))
 
 
@@ -20,109 +21,97 @@
   ()
   (:metaclass ~operating-class))
 
-(defgeneric mapslots (fn obj))
 
-(defmethod mapslots ((fn function) (obj ~operating-object))
-  (let* ((class (class-of obj))
-         (new (allocate-instance class)))
+(defgeneric ~mapslots (class fn obj))
+
+
+(defmethod ~mapslots ((class ~operating-class)
+                     (fn function)
+                     (obj ~operating-object))
+  (let* ((new (allocate-instance class)))
     (dotimes (i (length (class-slots class)))
       (setf (standard-instance-access new i)
             (funcall fn (standard-instance-access obj i))))
     new))
 
 
-(defgeneric walkslots (fn obj))
+(defgeneric ~walkslots (class fn obj))
 
-(defmethod walkslots ((fn function) (obj ~operating-object))
+
+(defmethod ~walkslots ((class ~operating-class)
+                      (fn function)
+                      (obj ~operating-object))
   (let* ((class (class-of obj)))
     (dotimes (i (length (class-slots class)))
       (funcall fn (standard-instance-access obj i)))
     obj))
 
-(defgeneric mapslots* (fn obj))
 
-(defmethod mapslots* ((fn function) (obj ~operating-object))
-  (mapslots (lambda (o)
-              (let ((walker (find-if (lambda (x)
-                                       (subtypep (type-of o) (car x)))
-                                     (class-walkers (class-of obj)))))
-                (if walker
-                    (funcall (car (cdr walker)) fn o)
-                    (funcall fn o))))
+(defgeneric ~mapslots* (class fn obj))
+
+
+(defmethod ~mapslots* ((class ~operating-class)
+                      (fn function)
+                      obj)
+  (funcall fn obj))
+
+
+(defmethod ~mapslots* ((class ~operating-class)
+                      (fn function)
+                      (obj ~operating-object))
+  (~mapslots class
+            (lambda (o)
+              (~mapslots* class fn o))
             obj))
 
-(defgeneric walkslots* (fn obj))
+
+(defgeneric ~walkslots* (class fn obj))
 
 
-
-(defmethod walkslots* ((fn function) (obj ~operating-object))
-  (walkslots (lambda (o)
-               (let ((walker (find-if (lambda (x)
-                                        (subtypep (type-of o) (car x)))
-                                      (class-walkers (class-of obj)))))
-                 (if walker
-                     (funcall (cdr (cdr walker)) fn o)
-                     (funcall fn o))))
+(defmethod ~walkslots* ((class ~operating-class)
+                       (fn function)
+                       (obj ~operating-object))
+  (~walkslots class
+             (lambda (o)
+               (~walkslots* class fn o))
              obj))
 
-#||||||||||||||||;
 
-(~defclass qqq (~operating-object)
-  ((a :initform 0)
-   (b :initform 0)
-   (c :initform 0)))
-
-(class-walkers (find-class 'qqq))
- 
-(let ((obj (make-instance 'qqq)))
-  (with-slots (a b c) obj
-    (setq a (make-instance 'qqq))
-    (setq b (make-instance 'qqq))
-    (setq c 42)
-    (let ((ans nil))
-      (walkslots* (lambda (x) (push x ans))
-                  (mapslots* #'values obj))
-      ans)))
-
-(42 0 0 0 0 0 0) 
- 
-
-(let ((obj (make-instance 'qqq)))
-  (with-slots (a b c) obj
-    (setq a (make-instance 'qqq))
-    (setq b (make-instance 'qqq))
-    (setq c 42)
-    (let ((ans nil))
-      (walkslots* (lambda (x) (push x ans))
-                  (mapslots* #'list obj))
-      ans)))
-
-((42) (0) (0) (0) (0) (0) (0)) 
-
- 
-
-(let ((obj (make-instance 'qqq)))
-  (setf (class-walkers (find-class 'qqq))
-        '((zreclos::operating-object mapslots . walkslots)
-          (list mapcar . mapc)))
-  (with-slots (a b c) obj
-    (setq a (make-instance 'qqq))
-    (setq b (make-instance 'qqq))
-    (setq c 42)
-    '(let ((ans nil))
-      (walkslots* (lambda (x) (push x ans))
-                  (mapslots* #'list obj))
-      ans)
-    (let ((ans nil))
-      (walkslots* (lambda (x) (push x ans))
-                  (mapslots* #'list obj))
-      ans)))
-
-(42 (0) (0) (0) (0) (0) (0)) 
+(defmethod ~walkslots* ((class ~operating-class)
+                      (fn function)
+                      obj)
+  (funcall fn obj))
 
 
-;||||||||||||||||#
+#|;
+(defmethod add-direct-method :before ((class ~operating-class)
+                                      (method method)) 
+  (when (find (method-generic-function method)
+              `(,#'~mapslots* ,#'~walkslots*))
+    (destructuring-bind (class fn obj)
+                        (method-specializers method)
+      (declare (ignore fn))
+      (if (find (class-name obj)
+                (cons T
+                      (class-container-types class)))
+          nil
+          (error "Undefined container type ~S which is not one of ~S."
+                 (class-name obj)
+                 (class-container-types class))))))
+;|#
 
+
+#|;
+(eval-always
+   (let ((method 
+         (find-method #'add-direct-method
+                      '(:before) 
+                      (list (find-class '~operating-class)
+                            (find-class 'method))
+                      nil)))
+    (unless method
+      (remove-method #'add-direct-method method))))
+;|#
 
 
 ;;; *EOF*

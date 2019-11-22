@@ -3,16 +3,17 @@
 (in-syntax *zreclos-syntax*)
 
 
-(defclass ~operating-class (standard-class)
-  ()
-  (:metaclass standard-class))
-
-
-'(defclass ~self-referent-operating-class
+(defclass ~self-referent-operating-class
           (~operating-class
            ~self-referent-class)
   ()
   (:metaclass standard-class))
+
+
+(defclass ~self-referent-operating-object 
+          (~operating-object ~self-referent-object)
+  ()
+  (:metaclass ~self-referent-operating-class))
 
 
 '(defclass ~lazy-class
@@ -47,23 +48,33 @@
   (:metaclass standard-class))
 
 
-(defclass ~self-referent-class (standard-class)
-  ()
-  (:metaclass standard-class))
-
-
-'(defclass ~ir-operating-class
+(defclass ~ir-operating-class
           (~instance-recording-class
            ~operating-class)
   ()
   (:metaclass standard-class))
 
+(defclass ~ir-operating-object
+          (~instance-recording-object
+           ~operating-object)
+  ()
+  (:metaclass ~ir-operating-class))
 
-'(defclass ~ir-self-referent-operating-class
+
+(defclass ~ir-self-referent-operating-class
           (~instance-recording-class 
-           ~self-referent-operating-class)
+           ~self-referent-operating-class
+           ~operating-class)
   ()
   (:metaclass standard-class))
+
+
+(defclass ~ir-self-referent-operating-object
+          (~instance-recording-object 
+           ~self-referent-operating-object
+           ~operating-object)
+  ()
+  (:metaclass ~ir-self-referent-operating-class))
 
 
 '(defclass ~ir-lazy-class

@@ -52,13 +52,11 @@
     (:metaclass b-class)))
 
 
-(defconstant <c>
-  (~defclass c (a b)
-    ()
-    (:metaclass c-class))) ;TODO
-
-
 (test |compute-metaclass test|
+  (defconstant <c>
+    (~defclass c (a b)
+      ()
+      (:metaclass c-class))) ;TODO
   (defparameter *z* (gensym "z"))
   (defparameter *y* (gensym "y"))
   (ensure-class *z* :direct-superclasses (list *y*))
@@ -104,6 +102,67 @@
            (series:collect-length
             (~scan-direct-instances
              (find-class 'irobj)))))))
+
+
+(test |operating-class test|
+  (defconstant <qqq>
+    (~defclass qqq (~operating-object)
+      ((a :initform 0)
+       (b :initform 0)
+       (c :initform 0))
+      (:container-types qqq list)))
+  (is (equal
+       (let ((obj (make-instance 'qqq)))
+         (with-slots (a b c) obj
+           (setq a (make-instance <qqq>))
+           (setq b (make-instance <qqq>))
+           (setq c 42)
+           (let ((ans nil))
+             (walkslots* <qqq>
+                         (lambda (x) (push x ans))
+                         (mapslots* <qqq>
+                                    #'1+
+                                    obj))
+             ans)))
+       '(43 1 1 1 1 1 1)))
+  (is (equalp
+       (let ((obj (make-instance <qqq>)))
+         (with-slots (a b c) obj
+           (setq a (make-instance <qqq>))
+           (setq b (make-instance <qqq>))
+           (setq c 42)
+           (let ((ans nil))
+             (walkslots* <qqq>
+                         (lambda (x) (push x ans))
+                         (mapslots* <qqq> #'list obj))
+             ans)))
+       '((42) (0) (0) (0) (0) (0) (0))))
+  (defmethod walkslots* ((class ~operating-class) 
+                         (fn function)
+                         (list list))
+    (mapc fn list))
+  (is (equalp
+       (let ((obj (make-instance <qqq>)))
+         (with-slots (a b c) obj
+           (setq a (make-instance <qqq>))
+           (setq b (make-instance <qqq>))
+           (setq c 42)
+           (let ((ans nil))
+             (walkslots* <qqq>
+                         (lambda (x) (push x ans))
+                         (mapslots* <qqq> #'list obj))
+             ans)))
+       '(42 0 0 0 0 0 0)))
+  (let ((method
+         (find-method #'walkslots*
+                      nil
+                      (list 
+                       (find-class 'zreclos:operating-class)
+                       (find-class 'function)
+                       (find-class 'list))
+                      nil)))
+    (when method
+      (remove-method #'walkslots* method))))
 
 
 #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||;

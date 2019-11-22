@@ -19,26 +19,45 @@
    self)
   (:export
    operating-class
+   operating-object
    self-referent-operating-class
    self-referent-operating-object
    lazy-class
+   lazy-object
    attributed-class
+   attributed-object
    attributed-lazy-class
+   attributed-lazy-object
    constrained-class
+   constrained-object
    constrained-lazy-class
+   constrained-lazy-object
    self-referent-class
    self-referent-object
    instance-recording-class
    instance-recording-object
    instance-recording-structure-class
-   scan-direct-instances
+   instance-recording-structure-object
    ir-operating-class
+   ir-operating-object
    ir-self-referent-operating-class
+   ir-self-referent-operating-object
    ir-lazy-class
+   ir-lazy-object
    ir-attributed-lazy-class
+   ir-attributed-lazy-object
    ir-attributed-class
+   ir-attributed-object
    ir-constrained-class
-   ir-constrained-lazy-class))
+   ir-constrained-object
+   ir-constrained-lazy-class
+   ir-constrained-lazy-object)
+  (:export 
+   scan-direct-instances
+   mapslots
+   mapslots*
+   walkslots
+   walkslots*))
 
 
 ;;; *EOF*

@@ -1,6 +1,12 @@
 (cl:in-package zreclos.meta)
 (in-syntax *zreclos-syntax*)
 
+
+(defclass ~self-referent-class (standard-class)
+  ()
+  (:metaclass standard-class))
+
+
 (defmethod validate-superclass ((c ~self-referent-class)
                                 (s standard-class))
   T)

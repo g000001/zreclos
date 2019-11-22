@@ -15,6 +15,7 @@
                #+lispworks 
                (:file "self-referent-class")
                (:file "instance-recording-class")
+               (:file "operating-class")
                (:file "test")))
 
 
