@@ -5,12 +5,13 @@
 (in-syntax *zreclos-syntax*)
 
 
+(eval-always
 (defun make-weak-vector (size &rest initargs)
   (declare (dynamic-extent initargs))
   #+lispworks
   (apply #'make-array size :weak T initargs)
   #+sbcl
-  (apply #'make-array size :element-type 'sb-ext:weak-pointer initargs))
+  (apply #'make-array size :element-type 'sb-ext:weak-pointer initargs)))
 
 
 (defclass ~instance-recording-class (standard-class)

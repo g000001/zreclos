@@ -9,7 +9,7 @@
                :closer-mop
                :series)
   :components ((:file "package")
-               (:file "readtable")
+               (:file "dsl")
                (:file "metaclass-inheritance")
                (:file "zreclos")
                #+lispworks 

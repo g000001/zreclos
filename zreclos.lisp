@@ -52,12 +52,6 @@
   (:metaclass standard-class))
 
 
-'(defclass ~instance-recording-structure-class (structure-class)
-  ((instance-record :initform (make-weak-vector 0 :adjustable T :fill-pointer 0)
-                    :accessor ~class-instance-record))
-  (:metaclass standard-class))
-
-
 '(defclass ~ir-operating-class
           (~instance-recording-class
            ~operating-class)
