@@ -118,9 +118,9 @@
            (setq b (make-instance <qqq>))
            (setq c 42)
            (let ((ans nil))
-             (walkslots* <qqq>
+             (~walkslots* <qqq>
                          (lambda (x) (push x ans))
-                         (mapslots* <qqq>
+                         (~mapslots* <qqq>
                                     #'1+
                                     obj))
              ans)))
@@ -132,12 +132,12 @@
            (setq b (make-instance <qqq>))
            (setq c 42)
            (let ((ans nil))
-             (walkslots* <qqq>
+             (~walkslots* <qqq>
                          (lambda (x) (push x ans))
-                         (mapslots* <qqq> #'list obj))
+                         (~mapslots* <qqq> #'list obj))
              ans)))
        '((42) (0) (0) (0) (0) (0) (0))))
-  (defmethod walkslots* ((class ~operating-class) 
+  (defmethod ~walkslots* ((class ~operating-class) 
                          (fn function)
                          (list list))
     (mapc fn list))
@@ -148,21 +148,21 @@
            (setq b (make-instance <qqq>))
            (setq c 42)
            (let ((ans nil))
-             (walkslots* <qqq>
+             (~walkslots* <qqq>
                          (lambda (x) (push x ans))
-                         (mapslots* <qqq> #'list obj))
+                         (~mapslots* <qqq> #'list obj))
              ans)))
        '(42 0 0 0 0 0 0)))
   (let ((method
-         (find-method #'walkslots*
+         (find-method #'~walkslots*
                       nil
                       (list 
-                       (find-class 'zreclos:operating-class)
+                       (find-class '~operating-class)
                        (find-class 'function)
                        (find-class 'list))
                       nil)))
     (when method
-      (remove-method #'walkslots* method))))
+      (remove-method #'~walkslots* method))))
 
 
 #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||;
@@ -171,4 +171,3 @@
 
 
 ;;; *EOF*
-

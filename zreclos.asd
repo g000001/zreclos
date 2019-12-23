@@ -11,10 +11,12 @@
   :components ((:file "package")
                (:file "dsl")
                (:file "metaclass-inheritance")
+               (:file "accessor-prefix-class")
                #+lispworks 
                (:file "self-referent-class")
                (:file "instance-recording-class")
                (:file "operating-class")
+               (:file "faceted-slot-class")
                (:file "zreclos")
                (:file "test")))
 

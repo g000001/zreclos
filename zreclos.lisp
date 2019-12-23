@@ -2,12 +2,8 @@
 (cl:in-package :zreclos.meta)
 (in-syntax *zreclos-syntax*)
 
+#|;
 
-(defclass ~self-referent-operating-class
-          (~operating-class
-           ~self-referent-class)
-  ()
-  (:metaclass standard-class))
 
 
 (defclass ~self-referent-operating-object 
@@ -113,5 +109,5 @@
   ()
   (:metaclass standard-class))
 
-
+;|#
 ;;; *EOF*

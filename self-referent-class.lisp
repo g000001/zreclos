@@ -20,7 +20,7 @@
 (defmethod clos::expand-defclass 
            ((prototype ~self-referent-class) metaclass name superclasses slots class-options)
   (destructuring-bind (eval-when opts &body body)
-                          (call-next-method)
+                      (call-next-method)
     `(,eval-when ,opts
        (flet (,@(mapcar #'make-creator-function-form slots))
          ,@body))))
@@ -63,7 +63,11 @@
          (eq 'lambda (caadr x)))))
 
 
-(defun self-referent-class-initfunction-form (ifform)
+(defgeneric make-sr-class-initfunction-form (class ifform))
+
+
+(defmethod make-sr-class-initfunction-form ((class ~self-referent-class)
+                                            ifform)
   (if (non-trivial-initform-initfunction-p ifform)
       (destructuring-bind (function (lambda arg &body body))
                           ifform
@@ -81,5 +85,8 @@
     (if (getf plist :initform)
         (progn
           (remf plist :initfunction)
-          `(list ,@plist :initfunction ,(self-referent-class-initfunction-form ifform)))
-        `(list ,@plist))))
+          `(list ,@plist 
+                 :initfunction ,(make-sr-class-initfunction-form prototype
+                                                                 ifform)))
+        (progn
+          `(list ,@plist)))))

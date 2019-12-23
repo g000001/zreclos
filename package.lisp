@@ -57,7 +57,10 @@
    mapslots
    mapslots*
    walkslots
-   walkslots*))
+   walkslots*)
+  (:export 
+   accessor-prefix-class
+   accessor-prefix-object))
 
 
 ;;; *EOF*

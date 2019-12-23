@@ -113,5 +113,4 @@
       (remove-method #'add-direct-method method))))
 ;|#
 
-
 ;;; *EOF*
