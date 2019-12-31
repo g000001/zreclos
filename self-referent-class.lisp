@@ -13,7 +13,9 @@
 
 
 (defun make-creator-function-form (slot-form)
-  (let ((name (car slot-form)))
+  (let ((name (if (consp slot-form)
+                  (car slot-form)
+                  slot-form)))
     `(,name (~self) (slot-value ~self ',name))))
 
 
