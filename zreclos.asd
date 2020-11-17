@@ -10,10 +10,12 @@
                :series)
   :components ((:file "package")
                (:file "dsl")
+               (:file "slotted-class")
                (:file "metaclass-inheritance")
                (:file "accessor-prefix-class")
                #+lispworks 
                (:file "self-referent-class")
+               (:file "attributed-class")
                (:file "instance-recording-class")
                (:file "operating-class")
                (:file "faceted-slot-class")

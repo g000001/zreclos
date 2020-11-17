@@ -83,34 +83,4 @@
   (funcall fn obj))
 
 
-#|;
-(defmethod add-direct-method :before ((class ~operating-class)
-                                      (method method)) 
-  (when (find (method-generic-function method)
-              `(,#'~mapslots* ,#'~walkslots*))
-    (destructuring-bind (class fn obj)
-                        (method-specializers method)
-      (declare (ignore fn))
-      (if (find (class-name obj)
-                (cons T
-                      (class-container-types class)))
-          nil
-          (error "Undefined container type ~S which is not one of ~S."
-                 (class-name obj)
-                 (class-container-types class))))))
-;|#
-
-
-#|;
-(eval-always
-   (let ((method 
-         (find-method #'add-direct-method
-                      '(:before) 
-                      (list (find-class '~operating-class)
-                            (find-class 'method))
-                      nil)))
-    (unless method
-      (remove-method #'add-direct-method method))))
-;|#
-
 ;;; *EOF*

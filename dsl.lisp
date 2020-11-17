@@ -133,3 +133,10 @@
    ()))
 
 ||#
+
+(defun find-slot-definition (slot-name slotds &optional (no-error-p nil))
+  (cond ((loop :for slotd :in slotds
+               :thereis (and (eq slot-name (slot-definition-name slotd))
+                             slotd)))
+        (no-error-p nil)
+        (t (error "~A is not the name of a slotd." slot-name))))

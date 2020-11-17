@@ -82,16 +82,16 @@
   (~faceted-slot-instance-access instance
                                  (list 'facet slot-name)
                                  nil
-                                 #'facet-unbound
-                                 #'facet-missing))
+                                 #'~facet-unbound
+                                 #'~facet-missing))
 
 
 (defun (setf ~slot-facet) (new-value instance slot-name)
   (setf (~faceted-slot-instance-access instance
                                        (list 'facet slot-name)
                                        nil
-                                       #'facet-unbound
-                                       #'facet-missing)
+                                       #'~facet-unbound
+                                       #'~facet-missing)
         new-value))
 
 
@@ -122,6 +122,32 @@
            (slot-unbound class instance slot-name))
           (T
            (standard-instance-access instance index)))))
+
+
+(defmethod describe-object ((obj ~faceted-slot-object) stream)
+  (format stream "~&~S ~A" obj (sys::is-a (string (type-of obj))))
+  (let ((class (class-of obj)))
+    (dolist (s (class-slots class))
+      (let ((name (slot-definition-name s)))
+        (let ((slotval (elt (clos::%svref obj 1)
+                            (slot-definition-location s)))
+              (facetval (elt (clos::%svref obj 1)
+                             (1+ (slot-definition-location s)))))
+          (format stream
+                  sys::*default-describe-object-label*
+                  name
+                  6)
+          (if (eq clos::*slot-unbound* slotval)
+              (write-string "#<unbound slot>" stream)
+              (format stream "~S" slotval))
+          (format stream
+                  "~% ~S ~VT "
+                  name
+                  6)
+          (if (eq clos::*slot-unbound* facetval)
+              (write-string "#<unbound facet>" stream)
+              (format stream "~S" facetval)))))
+    (terpri stream)))
 
 
 ;;; *EOF*

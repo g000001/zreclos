@@ -1,7 +1,9 @@
 ;;;; Zillion Random Extentions of Common Lisp Object System
 (cl:in-package zreclos.meta)
 
+
 (in-syntax *zreclos-syntax*)
+
 
 ;;;;
 ;;;; Metaclass Inheritance: ECLOS 
@@ -44,7 +46,7 @@
           ;;otherwise STANDARD-CLASS is the metaclass of C.
           (find-class 'standard-class)))))
 
- 
+
 (defun ensure-class-soft (name)
   (or (find-class name nil)
       (make-instance 'standard-class :name name)))
@@ -65,6 +67,7 @@
                            slots
                            class-options)))
 
+
 ;;;;
 ;;;; Metaclass Inheritance: STklos
 ;;;;
@@ -84,6 +87,7 @@
             (setf (find-class name) new)
             (push (cons meta-supers new) table-of-metas)
             new)))))
+
 
 (defun ensure-metaclass (supers)
   (if (endp supers)
@@ -123,6 +127,7 @@
                            slots
                            class-options)))
 
+
 #+lispworks
 (defmacro ~defclass (name superclasses slots &rest class-options)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
@@ -135,5 +140,6 @@
       ,superclasses
       ,slots
       ,@class-options)))
+
 
 ;;; *EOF*
