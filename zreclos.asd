@@ -10,16 +10,20 @@
                :series)
   :components ((:file "package")
                (:file "dsl")
-               (:file "slotted-class")
                (:file "metaclass-inheritance")
-               (:file "accessor-prefix-class")
-               #+lispworks 
-               (:file "self-referent-class")
-               (:file "attributed-class")
-               (:file "instance-recording-class")
-               (:file "operating-class")
-               (:file "faceted-slot-class")
                (:file "zreclos")
+               (:file "accessor-prefix-class")
+               (:file "00-standard-class")
+               (:file "01-instance-recording-class")
+               (:file "01-operating-class")
+               #+lispworks 
+               (:file "01-self-referent-class")
+               (:file "02-ir-operating-class")
+               (:file "02-self-referent-operating-class")
+               (:file "03-attributed-class")
+               (:file "03-ir-self-referent-operating-class")
+               (:file "04-ir-attributed-class")
+               (:file "faceted-slot-class")
                (:file "test")))
 
 

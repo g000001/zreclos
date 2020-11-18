@@ -1,4 +1,6 @@
 (cl:in-package zreclos.meta)
+
+
 (in-syntax *zreclos-syntax*)
 
 
@@ -33,10 +35,15 @@
   (:metaclass ~self-referent-class))
 
 
+(defmethod ultimate-ancestor-object-class-given-metaclass ((class (eql '~self-referent-class)))
+  '~self-referent-object)
+
+
 (defmethod shared-initialize :around ((instance ~self-referent-object) slot-names &rest initargs)
   (let ((*self-referent-object-self* instance))
     (declare (special *self-referent-object-self*))
     (call-next-method)))
+
 
 ;; from alexandria
 (defun flatten (tree)
@@ -92,3 +99,6 @@
                                                                  ifform)))
         (progn
           `(list ,@plist)))))
+
+
+;;; *EOF*

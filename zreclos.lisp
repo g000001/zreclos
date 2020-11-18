@@ -3,68 +3,7 @@
 (in-syntax *zreclos-syntax*)
 
 
-(defun alloc-fix-instance (wrapper instance-slots)
-  #+allegro
-  (excl::.primcall 'sys::new-standard-instance
-                   wrapper
-                   instance-slots)
-  #+lispworks
-  (sys:alloc-fix-instance wrapper instance-slots)
-  #+sbcl
-  (let* ((instance (sb-pcl::%make-instance (1+ sb-vm:instance-data-start))))
-    (setf (sb-kernel::%instance-layout instance) wrapper)
-    (setf (sb-pcl::std-instance-slots instance) instance-slots)
-    instance)
-  #+ccl
-  (let ((instance (ccl::gvector :instance 0 wrapper nil)))
-    (setf (ccl::instance.hash instance) (ccl::strip-tag-to-fixnum instance)
-	  (ccl::instance.slots instance) instance-slots)
-    instance))
-
-(defun class-wrapper (class)
-  #+allegro (excl::class-wrapper class)
-  #+lispworks (clos::class-wrapper class)
-  #+sbcl (sb-pcl::class-wrapper class)
-  #+ccl (ccl::instance-class-wrapper class))
-
-#++(class-wrapper (find-class 'standard-object))
-
-(defun standard-instance-wrapper (ins)
-  #+allegro (excl::std-instance-wrapper ins)
-  #+lispworks (clos::standard-instance-wrapper ins)
-  #+sbcl (sb-kernel::%instance-layout ins)
-  #+ccl (ccl::instance.class-wrapper ins))
-
-
-(defun standard-instance-slots (ins)
-  #+allegro (excl::std-instance-slots ins)
-  #+lispworks (clos::standard-instance-static-slots ins)
-  #+sbcl (sb-pcl::std-instance-slots ins)
-  #+ccl (ccl::instance.slots ins))
-
-
-#|(standard-instance-wrapper
- (alloc-fix-instance (class-wrapper (find-class 'standard-object))
-                     #(a b c)))
-
-(c2mop:standard-instance-access
- (alloc-fix-instance (class-wrapper (find-class 'standard-object))
-                     #(a b c))
- 0)
-
-(standard-instance-slots
- (alloc-fix-instance (class-wrapper (find-class 'standard-object))
-                     '(a b c)))|#
-
 #|;
-
-
-
-(defclass ~self-referent-operating-object 
-          (~operating-object ~self-referent-object)
-  ()
-  (:metaclass ~self-referent-operating-class))
-
 
 '(defclass ~lazy-class
           (~self-referent-operating-class)

@@ -30,6 +30,10 @@
   (:metaclass ~instance-recording-class))
 
 
+(defmethod ultimate-ancestor-object-class-given-metaclass ((class (eql '~instance-recording-class)))
+  '~instance-recording-object)
+
+
 (defmethod make-instance :around 
            ((class ~instance-recording-class) &rest initargs)
   (let* ((inst (call-next-method))

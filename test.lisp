@@ -165,6 +165,41 @@
       (remove-method #'~walkslots* method))))
 
 
+(test |attributed-class test|
+  (~defclass @foo (~attributed-object)
+    ((x :initform 1
+        :attributes
+        ((status :initform 'OK 
+                 :attributes
+                 ((meta-status :initform 'OK)))
+         (explanation :initform nil) something-else))
+     (y))
+    (:default-attributes
+     ((status :initform 'unknown))))
+  (~defclass @bar (foo)
+    ((z))
+    (:default-attributes
+     ((zz :initform 'zzunknown))))
+  (~defclass @baz (~attributed-object)
+    ((x :initform 'x
+        :attributes
+        ((status :initform 'OK 
+                 :attributes
+                 ((meta-status :initform 'OK)))
+         (explanation :initform (list (status ~self)
+                                      (status ~self)))
+         something-else))
+     (y :initform (x ~self)))
+    (:default-attributes
+     ((status :initform 'unknown))))
+  (is (eq 'ok (slot-value (~slot-attribute f 'x) 'status)))
+  (is (eq 'zzunknown (~attribute-value b 'y 'zz)))
+  (is (eq 'ok (~attribute-value b 'x 'status 'meta-status)))
+  (is (equal '(ok ok)
+             (~attribute-value (make-instance 'baz) 'x 'explanation))))
+
+
+
 #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||;
 (run!)
 ;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#

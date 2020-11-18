@@ -4,15 +4,11 @@
 (in-syntax *zreclos-syntax*)
 
 
-(~defclass ~attributed-class (~slotted-class ~self-referent-class)
+(defmetaclass ~attributed-class (~self-referent-operating-class)
   ((default-attributes :initform '()
                        :initarg :default-attributes
-                       :accessor ~class-default-attributes)))
-
-
-(defclass ~attributed-object (~slotted-object)
-  ()
-  (:metaclass ~attributed-class))
+                       :accessor ~class-default-attributes))
+  (:metaclass standard-class))
 
 
 (defmethod allocate-instance ((class ~attributed-class) &rest initargs)
@@ -26,13 +22,13 @@
 
 
 (defun ~attributed-instance-slot-access (instance index)
-  (aref (standard-instance-slots instance) 
+  (aref (instance-slots instance) 
         0
         index))
 
 
 (defun ~attributed-instance-attribute-access (instance index)
-  (aref (standard-instance-slots instance) 
+  (aref (instance-slots instance) 
         1
         index))
 
@@ -62,14 +58,14 @@
 
 
 (defun (setf ~attributed-instance-slot-access) (val instance index)
-  (setf (aref (standard-instance-slots instance) 
+  (setf (aref (instance-slots instance) 
               0
               index)
         val))
 
 
 (defun (setf ~attributed-instance-attribute-access) (val instance index)
-  (setf (aref (standard-instance-slots instance) 
+  (setf (aref (instance-slots instance) 
               1
               index)
         val))
@@ -139,8 +135,7 @@
   (unless (and value (null (cdr value)))
     (error "attributed-class :default-attributes must have a single value."))
   (list name
-        `(let ((c (defclass ,(gensym "DEFAULT-ATTRIBUTES-")
-                      (~attributed-object)
+        `(let ((c (defclass ,(gensym "DEFAULT-ATTRIBUTES-") (~attributed-object)
                     ,(car value)
                     (:metaclass ~attributed-class))))
            (finalize-inheritance c)
@@ -162,9 +157,9 @@
                                               direct-slot-definitions)
   (let ((effective-slotd (call-next-method)))
     (dolist (slotd direct-slot-definitions)
-      (when (typep slotd 'slot/attribute-definition)
-        (setf (slot/attribute-definition-attributes effective-slotd) 
-              (slot/attribute-definition-attributes slotd))
+      (when (typep slotd '~slot/attribute-definition)
+        (setf (~slot/attribute-definition-attributes effective-slotd) 
+              (~slot/attribute-definition-attributes slotd))
         (return)))
     effective-slotd))
 
@@ -193,6 +188,9 @@
                 (setq ans (slot-value ans (car n)))))
           names)
     ans))
+
+
+nil
 
 
 ;;; *EOF*
