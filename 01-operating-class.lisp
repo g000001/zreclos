@@ -38,8 +38,6 @@
   #+ccl (ccl::instance-class-wrapper class))
 
 
-#++(class-wrapper (find-class 'standard-object))
-
 (defun instance-wrapper (ins)
   #+allegro (excl::std-instance-wrapper ins)
   #+lispworks (clos::standard-instance-wrapper ins)
@@ -54,33 +52,108 @@
   #+ccl (ccl::instance.slots ins))
 
 
-#|(instance-wrapper
- (alloc-fix-instance (class-wrapper (find-class 'standard-object))
-                     #(a b c)))
-
-(c2mop:standard-instance-access
- (alloc-fix-instance (class-wrapper (find-class 'standard-object))
-                     #(a b c))
- 0)
-
-(instance-slots
- (alloc-fix-instance (class-wrapper (find-class 'standard-object))
-                     '(a b c)))|#
+(defconstant ~operating-object-tracks 4)
 
 
-(defun initialize-slot-from-initarg (class instance slotd initargs)
+(defconstant ~values-track 0)
+
+
+(defconstant ~attributes-track 1)
+
+
+(defconstant ~init-options-track 2)
+
+
+(defconstant ~constraints-track 3)
+
+
+(defun allocate-operating-object-vector (nfields)
+  (make-array (list 4 nfields) 
+              :initial-element
+              #+lispworks clos::*slot-unbound*
+              #+sbcl (sb-pcl::make-unbound-marker)))
+
+
+(defmethod allocate-instance ((class ~operating-class) &rest initargs)
+  (alloc-fix-instance (class-wrapper class)
+                      (let* ((nfields (length (class-slots class)))
+                             (a (make-array `(,operating-object-tracks ,nfields) 
+                                            :initial-element
+                                            #+lispworks clos::*slot-unbound*
+                                            #+sbcl (sb-pcl::make-unbound-marker))))
+                        a)))
+
+
+(defmacro define-track-accessor (track)
+  `(progn
+     (defun ,(intern (concatenate 'string (string 'instance-slot-) (string track))
+                     'zreclos)
+            (instance slotd)
+       (aref (instance-slots instance) 
+             ,(intern (concatenate 'string (string track) (string 's-track))
+                      'zreclos)
+             (slot-definition-location slotd)))
+     (defun (setf ,(intern (concatenate 'string (string 'instance-slot-) (string track))
+                           'zreclos))
+            (value instance slotd)
+       (setf (aref (instance-slots instance) 
+                   ,(intern (concatenate 'string (string track) (string 's-track))
+                            'zreclos)
+                   (slot-definition-location slotd))
+             value))))
+
+
+(define-track-accessor value)
+
+
+(define-track-accessor attribute)
+
+
+(define-track-accessor init-option)
+
+
+(defun ~instance-slot-init-option-boundp (instance slotd)
+  (eq #+lispworks clos::*slot-unbound*
+      (~instance-slot-init-option 
+       instance
+       slotd)))
+
+
+(define-track-accessor constraint)
+
+
+(defmethod slot-value-using-class
+           ((class ~operating-class) instance (slotd slot-definition))
+  (~instance-slot-value instance slotd))
+
+
+(defmethod (setf slot-value-using-class)
+           (val (class ~operating-class) instance (slotd slot-definition))
+  (setf (~instance-slot-value instance slotd)
+        val))
+
+
+(defgeneric initialize-slot-from-initarg (class instance slotd initargs))
+
+
+(defmethod initialize-slot-from-initarg (class instance slotd initargs)
+  (declare (ignore class))
   (let ((slot-initargs (slot-definition-initargs slotd)))
     (loop :for (initarg value) :on initargs :by #'cddr
           :do (when (member initarg slot-initargs)
-                (setf (slot-value-using-class class instance slotd)
+                (setf (instance-slot-value instance slotd)
                       value)
                 (return T)))))
 
 
-(defun initialize-slot-from-initfunction (class instance slotd)
+(defgeneric initialize-slot-from-initfunction (class instance slotd))
+
+
+(defmethod initialize-slot-from-initfunction (class instance slotd)
+  (declare (ignore class))
   (let ((initfun (slot-definition-initfunction slotd)))
     (unless (not initfun)
-      (setf (slot-value-using-class class instance slotd)
+      (setf (instance-slot-value instance slotd)
             (funcall initfun)))))
 
 
@@ -102,9 +175,9 @@
                      (fn function)
                      (obj ~operating-object))
   (let* ((new (allocate-instance class)))
-    (dotimes (i (length (class-slots class)))
-      (setf (standard-instance-access new i)
-            (funcall fn (standard-instance-access obj i))))
+    (dolist (slotd (class-slots class))
+      (setf (~instance-slot-value new slotd)
+            (funcall fn (~instance-slot-value obj slotd))))
     new))
 
 
@@ -112,11 +185,11 @@
 
 
 (defmethod ~walkslots ((class ~operating-class)
-                      (fn function)
-                      (obj ~operating-object))
+                       (fn function)
+                       (obj ~operating-object))
   (let* ((class (class-of obj)))
-    (dotimes (i (length (class-slots class)))
-      (funcall fn (standard-instance-access obj i)))
+    (dolist (slotd (class-slots class))
+      (funcall fn (~instance-slot-value obj slotd)))
     obj))
 
 
@@ -156,8 +229,16 @@
   (funcall fn obj))
 
 
-(defun find-slot-definition (slot-name slotds &optional (no-error-p nil))
-  (cond ((loop :for slotd :in slotds
+(defun ~find-named-slot-using-class (class slot-name &optional (no-error-p nil))
+  #+lispworks
+  (let ((wrapper (class-wrapper class))
+        (pos nil))
+    (cond ((setq pos (position slot-name (elt wrapper 1)))
+           (elt (elt wrapper 4) pos))
+          (no-error-p nil)
+          (t (error "~A is not the name of a slotd." slot-name))))
+  #-(or lispworks)
+  (cond ((loop :for slotd :in (class-slots class)
                :thereis (and (eq slot-name (slot-definition-name slotd))
                              slotd)))
         (no-error-p nil)

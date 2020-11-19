@@ -11,71 +11,27 @@
   (:metaclass standard-class))
 
 
-(defmethod allocate-instance ((class ~attributed-class) &rest initargs)
-  (alloc-fix-instance (class-wrapper class)
-                      (let* ((nfields (length (class-slots class)))
-                             (a (make-array (list 2 nfields) 
-                                            :initial-element
-                                            #+lispworks clos::*slot-unbound*
-                                            #+sbcl (sb-pcl::make-unbound-marker))))
-                        a)))
-
-
-(defun ~attributed-instance-slot-access (instance index)
-  (aref (instance-slots instance) 
-        0
-        index))
-
-
-(defun ~attributed-instance-attribute-access (instance index)
-  (aref (instance-slots instance) 
-        1
-        index))
-
-
-(defmethod slot-value-using-class
-           ((class ~attributed-class) instance (slotd slot-definition))
-  (~attributed-instance-slot-access instance
-                                    (slot-definition-location slotd)))
-
-
 (defgeneric ~slot-attribute-using-class (class instance slotd))
 
 
 (defmethod ~slot-attribute-using-class
            ((class ~attributed-class) instance (slotd slot-definition))
-  (~attributed-instance-attribute-access instance
-                                         (slot-definition-location slotd)))
+  (~instance-slot-attribute instance slotd))
 
 
 (defun ~slot-attribute (instance slot-name)
   (let ((class (class-of instance)))
     (~slot-attribute-using-class class
                                  instance
-                                 (find slot-name
-                                       (class-slots class)
-                                       :key #'slot-definition-name))))
+                                 (find-named-slot-using-class class slot-name))))
 
 
-(defun (setf ~attributed-instance-slot-access) (val instance index)
-  (setf (aref (instance-slots instance) 
-              0
-              index)
-        val))
-
-
-(defun (setf ~attributed-instance-attribute-access) (val instance index)
-  (setf (aref (instance-slots instance) 
-              1
-              index)
-        val))
-
-
-(defmethod (setf slot-value-using-class)
-           (val (class ~attributed-class) instance (slotd slot-definition))
-  (setf (~attributed-instance-slot-access instance
-                                          (slot-definition-location slotd))
-        val))
+(defun (setf ~slot-attribute) (val instance slot-name)
+  (let ((class (class-of instance)))
+    (setf (~slot-attribute-using-class class
+                                       instance
+                                       (find-named-slot-using-class class slot-name))
+          val)))
 
 
 (defgeneric (setf ~slot-attribute-using-class) (val class instance slotd))
@@ -83,19 +39,8 @@
 
 (defmethod (setf ~slot-attribute-using-class)
            (val (class ~attributed-class) instance (slotd slot-definition))
-  (setf (~attributed-instance-attribute-access instance
-                                               (slot-definition-location slotd))
+  (setf (~instance-slot-attribute instance slotd)
         val))
-
-
-(defun (setf ~slot-attribute) (val instance slot-name)
-  (let ((class (class-of instance)))
-    (setf (~slot-attribute-using-class class
-                                       instance
-                                       (find slot-name
-                                             (class-slots class)
-                                             :key #'slot-definition-name))
-          val)))
 
 
 (defclass ~slot/attribute-definition (standard-slot-definition)
@@ -120,7 +65,7 @@
              `(let ((c (defclass ,(gensym (format nil
                                                   "ATTRIBUTED-CLASS.~A-" 
                                                   (string (car slot))))
-                           (~attributed-object)
+                         (~attributed-object)
                          ,value
                          (:metaclass ~attributed-class))))
                 (finalize-inheritance c)
@@ -188,9 +133,6 @@
                 (setq ans (slot-value ans (car n)))))
           names)
     ans))
-
-
-nil
 
 
 ;;; *EOF*

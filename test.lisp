@@ -93,7 +93,9 @@
 
 
 (test |instance-recording-class test|
-  (~defclass irobj (~instance-recording-object) ())
+  (~defclass irobj (~instance-recording-object) 
+    ()
+    (:metaclass ~instance-recording-class))
   (~reset-instance-record (find-class 'irobj))
   (let ((size 100))
     (dotimes (i size)
@@ -110,7 +112,8 @@
       ((a :initform 0)
        (b :initform 0)
        (c :initform 0))
-      (:container-types qqq list)))
+      ;;(:container-types qqq list)
+      (:metaclass ~operating-class)))
   (is (equal
        (let ((obj (make-instance 'qqq)))
          (with-slots (a b c) obj
@@ -119,10 +122,10 @@
            (setq c 42)
            (let ((ans nil))
              (~walkslots* <qqq>
-                         (lambda (x) (push x ans))
-                         (~mapslots* <qqq>
-                                    #'1+
-                                    obj))
+                          (lambda (x) (push x ans))
+                          (~mapslots* <qqq>
+                                      #'1+
+                                      obj))
              ans)))
        '(43 1 1 1 1 1 1)))
   (is (equalp
@@ -133,13 +136,13 @@
            (setq c 42)
            (let ((ans nil))
              (~walkslots* <qqq>
-                         (lambda (x) (push x ans))
-                         (~mapslots* <qqq> #'list obj))
+                          (lambda (x) (push x ans))
+                          (~mapslots* <qqq> #'list obj))
              ans)))
        '((42) (0) (0) (0) (0) (0) (0))))
   (defmethod ~walkslots* ((class ~operating-class) 
-                         (fn function)
-                         (list list))
+                          (fn function)
+                          (list list))
     (mapc fn list))
   (is (equalp
        (let ((obj (make-instance <qqq>)))
@@ -149,8 +152,8 @@
            (setq c 42)
            (let ((ans nil))
              (~walkslots* <qqq>
-                         (lambda (x) (push x ans))
-                         (~mapslots* <qqq> #'list obj))
+                          (lambda (x) (push x ans))
+                          (~mapslots* <qqq> #'list obj))
              ans)))
        '(42 0 0 0 0 0 0)))
   (let ((method
@@ -176,7 +179,7 @@
      (y))
     (:default-attributes
      ((status :initform 'unknown))))
-  (~defclass @bar (foo)
+  (~defclass @bar (@foo)
     ((z))
     (:default-attributes
      ((zz :initform 'zzunknown))))
@@ -192,17 +195,68 @@
      (y :initform (x ~self)))
     (:default-attributes
      ((status :initform 'unknown))))
-  (is (eq 'ok (slot-value (~slot-attribute f 'x) 'status)))
-  (is (eq 'zzunknown (~attribute-value b 'y 'zz)))
-  (is (eq 'ok (~attribute-value b 'x 'status 'meta-status)))
-  (is (equal '(ok ok)
-             (~attribute-value (make-instance 'baz) 'x 'explanation))))
+  (let ((f (make-instance '@foo))
+        (b (make-instance '@bar)))
+    (is (eq 'ok (slot-value (~slot-attribute f 'x) 'status)))
+    (is (eq 'zzunknown (~attribute-value b 'y 'zz)))
+    (is (eq 'ok (~attribute-value b 'x 'status 'meta-status)))
+    (is (equal '(ok ok)
+               (~attribute-value (make-instance '@baz) 'x 'explanation)))))
 
 
-
-#||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||;
-(run!)
-;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+(test |lazy-class test|
+  (~defclass lazy-qqq (~lazy-object)
+    ((a :initform 42 :initarg :a :initialization ((:at :read)))
+     (b :initform 43 :initarg :b :initialization ((:at :access)))
+     (c :initform 100 :initarg :c :initialization ((:after a)
+                                                   (:at :access)))))
+  (~defclass lazy-rrr (~lazy-object)
+    (;; You can set it, or read it.
+     (k :accessor k
+        :initform 'k
+        :initialization ((:at :read))
+        )
+     ;; You can set it, read it,
+     ;; or initialize w (see below).
+     (x :accessor x
+        :initform 1
+        :initialization ((:at :access))
+        )
+     ;; y0 cannot be accessed at all
+     ;; before setting it explicitly.
+     (y0 :accessor y0
+         :initform (1+ (x ~self))
+         :initialization ((:after x))) 
+     ;; To use y, you must either set it, or initialize x.
+     (y :accessor y
+        :initform (1+ (x ~self))
+        ) ;:initialization (:follows x)
+     ;; To use z, you must either set it, or initialize y.
+     ;; If you initialize w,
+     ;; z won't get initialized if y is not.
+     (z :accessor z
+        :initform (1+ (y ~self))
+        :initialization ((:check y) 
+                         (:at :access)
+                         (:before k))) 
+     ;; You can set it, or read it.
+     ;; If the :right-before argument was (x z),
+     ;; initialization of w would always provoke z's.
+     (w :accessor w
+        :initform 3
+        :initialization ((:at :access) (:implies z x))))
+    )
+  (is (equal (let ((o (make-instance 'lazy-qqq)))
+               (list (incf (slot-value o 'b))
+                     (slot-value o 'c)))
+             '(43 100)))
+  (is (equal (let* ((c (find-class 'lazy-rrr))
+                    (i (make-instance c)))
+               (mapcar (lambda (s)
+                         (slot-value-using-class c i s))
+                       (class-slots c)))
+             
+             '(k 1 2 2 3 3))))
 
 
 ;;; *EOF*
