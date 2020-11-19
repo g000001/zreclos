@@ -23,14 +23,14 @@
   (let ((class (class-of instance)))
     (~slot-attribute-using-class class
                                  instance
-                                 (find-named-slot-using-class class slot-name))))
+                                 (~find-named-slot-using-class class slot-name))))
 
 
 (defun (setf ~slot-attribute) (val instance slot-name)
   (let ((class (class-of instance)))
     (setf (~slot-attribute-using-class class
                                        instance
-                                       (find-named-slot-using-class class slot-name))
+                                       (~find-named-slot-using-class class slot-name))
           val)))
 
 
@@ -109,10 +109,9 @@
     effective-slotd))
 
 
-(defmethod shared-initialize ((instance ~attributed-object) slot-names &rest initargs)
+(defmethod shared-initialize :after ((instance ~attributed-object) slot-names &rest initargs)
   (let* ((class (class-of instance))
          (slots (class-slots class))
-         (instance (call-next-method))
          (default-attributes (~class-default-attributes class)))
     (dolist (s slots)
       (let ((attr (~slot/attribute-definition-attributes s)))
@@ -121,8 +120,7 @@
                   (make-instance (~slot/attribute-definition-attributes s)))
             (and default-attributes
                  (setf (~slot-attribute-using-class class instance s)
-                       (make-instance default-attributes))))))
-    instance))
+                       (make-instance default-attributes))))))))
 
 
 (defun ~attribute-value (instance &rest names)

@@ -12,7 +12,7 @@
 
 (defmetaclass ~lazy-class (~self-referent-operating-class)
   ()
-  (:slot-definitions-mixin-slots 
+  (:slot-definitions-mixin-slots
    (initialization :initform (make-slot-init)
                    :accessor slot-definition-initialization
                    :initarg :initialization))
@@ -50,14 +50,15 @@
     eslotd))
 
 
-(defmethod shared-initialize 
+(defmethod shared-initialize  
            ((instance ~lazy-object) slot-names &rest initargs)
   (let* ((class (class-of instance))
+         (instance (call-next-method))
          (slots (class-slots class)))
     ;; lazy init
     (dolist (slotd slots)
       (setf (~instance-slot-init-option instance slotd)
-            (lambda (&aux (*self-referent-object-self* instance))
+             (lambda (&aux (*self-referent-object-self* instance))
               (declare (special *self-referent-object-self*))
               (block nil
                 (dolist (m (slot-init-method (slot-definition-initialization slotd)))

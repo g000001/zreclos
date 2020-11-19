@@ -77,7 +77,7 @@
 (defmethod allocate-instance ((class ~operating-class) &rest initargs)
   (alloc-fix-instance (class-wrapper class)
                       (let* ((nfields (length (class-slots class)))
-                             (a (make-array `(,operating-object-tracks ,nfields) 
+                             (a (make-array `(,~operating-object-tracks ,nfields) 
                                             :initial-element
                                             #+lispworks clos::*slot-unbound*
                                             #+sbcl (sb-pcl::make-unbound-marker))))
@@ -141,7 +141,7 @@
   (let ((slot-initargs (slot-definition-initargs slotd)))
     (loop :for (initarg value) :on initargs :by #'cddr
           :do (when (member initarg slot-initargs)
-                (setf (instance-slot-value instance slotd)
+                (setf (~instance-slot-value instance slotd)
                       value)
                 (return T)))))
 
@@ -153,7 +153,7 @@
   (declare (ignore class))
   (let ((initfun (slot-definition-initfunction slotd)))
     (unless (not initfun)
-      (setf (instance-slot-value instance slotd)
+      (setf (~instance-slot-value instance slotd)
             (funcall initfun)))))
 
 

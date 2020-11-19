@@ -52,12 +52,20 @@
        ,@(and 
           defslotds
           `((finalize-inheritance
-             (defclass ,slotd (standard-slot-definition) 
+             (defclass ,slotd (,@(mapcar (lambda (s)
+                                           (class-name 
+                                            (effective-slot-definition-class
+                                             (class-prototype (find-class s)))))
+                                         default-supers)) 
                ,@(and defslotds (list (cdr defslotds)))))))
        ,@(and 
           defdslotds
           `((finalize-inheritance
-             (defclass ,dslotd (standard-direct-slot-definition ,slotd) 
+             (defclass ,dslotd (,@(mapcar (lambda (s)
+                                            (class-name 
+                                             (direct-slot-definition-class
+                                              (class-prototype (find-class s)))))
+                                          default-supers)) 
                ,@(and defdslotds (list (cdr defdslotds)))))
             (defmethod direct-slot-definition-class ((class ,name)
                                                      &rest initargs)
@@ -66,7 +74,11 @@
        ,@(and
           defeslotds
           `((finalize-inheritance
-             (defclass ,eslotd (standard-effective-slot-definition ,slotd) 
+             (defclass ,eslotd (,@(mapcar (lambda (s)
+                                            (class-name 
+                                             (effective-slot-definition-class
+                                              (class-prototype (find-class s)))))
+                                          default-supers)) 
                ,@(and defeslotds (list (cdr defeslotds)))))
             (defmethod effective-slot-definition-class ((class ,name)
                                                         &rest initargs)
