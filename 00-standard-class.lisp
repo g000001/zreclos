@@ -53,19 +53,14 @@
           defslotds
           `((finalize-inheritance
              (defclass ,slotd (,@(mapcar (lambda (s)
-                                           (class-name 
-                                            (effective-slot-definition-class
-                                             (class-prototype (find-class s)))))
-                                         default-supers)) 
+                                           (symbolconc (remove-\"class\"-suffix s)
+                                                       '-slot-definition))
+                                         default-supers))
                ,@(and defslotds (list (cdr defslotds)))))))
        ,@(and 
           defdslotds
           `((finalize-inheritance
-             (defclass ,dslotd (,@(mapcar (lambda (s)
-                                            (class-name 
-                                             (direct-slot-definition-class
-                                              (class-prototype (find-class s)))))
-                                          default-supers)) 
+             (defclass ,dslotd (standard-direct-slot-definition ,slotd) 
                ,@(and defdslotds (list (cdr defdslotds)))))
             (defmethod direct-slot-definition-class ((class ,name)
                                                      &rest initargs)
@@ -74,11 +69,7 @@
        ,@(and
           defeslotds
           `((finalize-inheritance
-             (defclass ,eslotd (,@(mapcar (lambda (s)
-                                            (class-name 
-                                             (effective-slot-definition-class
-                                              (class-prototype (find-class s)))))
-                                          default-supers)) 
+             (defclass ,eslotd (standard-effective-slot-definition ,slotd) 
                ,@(and defeslotds (list (cdr defeslotds)))))
             (defmethod effective-slot-definition-class ((class ,name)
                                                         &rest initargs)

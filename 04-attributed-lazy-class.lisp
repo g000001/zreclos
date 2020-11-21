@@ -12,5 +12,4 @@
   (:effective-slot-definitions-mixin-slots)
   (:metaclass standard-class))
 
-
 ;;; *EOF*

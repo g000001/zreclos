@@ -14,6 +14,7 @@
                (:file "zreclos")
                (:file "accessor-prefix-class")
                (:file "00-standard-class")
+
                (:file "01-instance-recording-class")
                (:file "01-operating-class")
                #+lispworks 
@@ -26,9 +27,12 @@
                (:file "04-ir-attributed-class")
                (:file "04-attributed-lazy-class")
                (:file "04-ir-lazy-class")
-               ;(:file "05-ir-attributed-lazy-class")
+               (:file "05-ir-attributed-lazy-class")
                (:file "faceted-slot-class")
-               (:file "test")))
+               (:file "test")
+               #||
+               ||#
+               ))
 
 
 (defmethod perform ((o test-op) (c (eql (find-system :zreclos))))

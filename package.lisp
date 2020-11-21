@@ -54,13 +54,21 @@
    ir-constrained-lazy-object)
   (:export 
    scan-direct-instances
+   reset-instance-record
    mapslots
    mapslots*
    walkslots
    walkslots*)
   (:export 
    accessor-prefix-class
-   accessor-prefix-object))
+   accessor-prefix-object)
+  (:export 
+   attribute-value))
+
+
+(defpackage zreclos-user
+  (:use c2cl zreclos)
+  (:shadowing-import-from zreclos defclass))
 
 
 ;;; *EOF*

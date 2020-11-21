@@ -3,15 +3,17 @@
 
 (in-syntax *zreclos-syntax*)
 
-
-(defclass ~self-referent-class (standard-class)
+(defmetaclass ~self-referent-class (standard-class)
   ()
   (:metaclass standard-class))
 
 
-(defmethod validate-superclass ((c ~self-referent-class)
+(defclass ~self-referent-slot-definition (standard-slot-definition)
+  ())
+
+#|(defmethod validate-superclass ((c ~self-referent-class)
                                 (s standard-class))
-  T)
+  T)|#
 
 
 (defun make-creator-function-form (slot-form)
@@ -30,13 +32,13 @@
          ,@body))))
 
 
-(defclass ~self-referent-object (standard-object) 
+#|(defclass ~self-referent-object (standard-object) 
   ()
-  (:metaclass ~self-referent-class))
+  (:metaclass ~self-referent-class))|#
 
 
-(defmethod ultimate-ancestor-object-class-given-metaclass ((class (eql '~self-referent-class)))
-  '~self-referent-object)
+#|(defmethod ultimate-ancestor-object-class-given-metaclass ((class (eql '~self-referent-class)))
+  '~self-referent-object)|#
 
 
 (defmethod shared-initialize :around ((instance ~self-referent-object) slot-names &rest initargs)

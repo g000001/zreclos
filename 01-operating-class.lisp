@@ -12,6 +12,9 @@
   (:metaclass standard-class))
 
 
+(defclass ~operating-slot-definition (standard-slot-definition)
+  ())
+
 (defun alloc-fix-instance (wrapper instance-slots)
   #+allegro
   (excl::.primcall 'sys::new-standard-instance

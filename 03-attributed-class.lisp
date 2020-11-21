@@ -10,7 +10,6 @@
                        :accessor ~class-default-attributes))
   (:metaclass standard-class))
 
-
 (defgeneric ~slot-attribute-using-class (class instance slotd))
 
 
@@ -43,14 +42,14 @@
         val))
 
 
-(defclass ~slot/attribute-definition (standard-slot-definition)
+(defclass ~attributed-slot-definition (standard-slot-definition)
   ((attributes :initform nil
                :initarg :attributes 
-               :accessor ~slot/attribute-definition-attributes)))
+               :accessor ~attributed-slot-definition-attributes)))
 
 
 (defclass ~direct-slot/attribute-definition
-          (standard-direct-slot-definition ~slot/attribute-definition)
+          (standard-direct-slot-definition ~attributed-slot-definition)
   ())
 
 
@@ -88,7 +87,7 @@
 
 
 (defclass ~effective-slot/attribute-definition
-          (standard-effective-slot-definition ~slot/attribute-definition)
+          (standard-effective-slot-definition ~attributed-slot-definition)
   ())
 
 
@@ -102,9 +101,9 @@
                                               direct-slot-definitions)
   (let ((effective-slotd (call-next-method)))
     (dolist (slotd direct-slot-definitions)
-      (when (typep slotd '~slot/attribute-definition)
-        (setf (~slot/attribute-definition-attributes effective-slotd) 
-              (~slot/attribute-definition-attributes slotd))
+      (when (typep slotd '~attributed-slot-definition)
+        (setf (~attributed-slot-definition-attributes effective-slotd) 
+              (~attributed-slot-definition-attributes slotd))
         (return)))
     effective-slotd))
 
@@ -114,10 +113,10 @@
          (slots (class-slots class))
          (default-attributes (~class-default-attributes class)))
     (dolist (s slots)
-      (let ((attr (~slot/attribute-definition-attributes s)))
+      (let ((attr (~attributed-slot-definition-attributes s)))
         (if attr
             (setf (~slot-attribute-using-class class instance s)
-                  (make-instance (~slot/attribute-definition-attributes s)))
+                  (make-instance (~attributed-slot-definition-attributes s)))
             (and default-attributes
                  (setf (~slot-attribute-using-class class instance s)
                        (make-instance default-attributes))))))))

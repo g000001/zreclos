@@ -8,7 +8,9 @@
               (~operating-class
                ~self-referent-class)
   ()
+  (:slot-definitions-mixin-slots)
   (:metaclass standard-class))
+  
 
 
 ;;; *EOF*
