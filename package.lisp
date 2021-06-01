@@ -63,7 +63,11 @@
    accessor-prefix-class
    accessor-prefix-object)
   (:export 
-   attribute-value))
+   attribute-value)
+  (:export
+   required-slot-class
+   direct-required-slots
+   class-required-slots))
 
 
 (defpackage zreclos-user

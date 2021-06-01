@@ -12,9 +12,9 @@
                (:file "dsl")
                (:file "metaclass-inheritance")
                (:file "zreclos")
+               (:file "required-slot-class")
                (:file "accessor-prefix-class")
                (:file "00-standard-class")
-
                (:file "01-instance-recording-class")
                (:file "01-operating-class")
                #+lispworks 
