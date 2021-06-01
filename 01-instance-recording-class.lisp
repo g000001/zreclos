@@ -15,7 +15,7 @@
 
 
 (defmetaclass ~instance-recording-class (standard-class)
-  ((instance-record :initform (make-weak-vector 0 :adjustable T :fill-pointer 0)
+  ((instance-record :initform (make-array 0 :adjustable T :fill-pointer 0)
                     :accessor ~class-instance-record))
   (:metaclass standard-class))
 
@@ -30,7 +30,7 @@
 
 (defun ~reset-instance-record (class)
   (setf (~class-instance-record class)
-        (make-weak-vector 0 :adjustable T :fill-pointer 0)))
+        (make-array 0 :adjustable T :fill-pointer 0)))
 
 
 (declaim (inline ~scan-direct-instances))
