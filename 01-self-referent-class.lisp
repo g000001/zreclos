@@ -3,6 +3,7 @@
 
 (in-syntax *zreclos-syntax*)
 
+
 (defmetaclass ~self-referent-class (standard-class)
   ()
   (:metaclass standard-class))
@@ -10,6 +11,7 @@
 
 (defclass ~self-referent-slot-definition (standard-slot-definition)
   ())
+
 
 #|(defmethod validate-superclass ((c ~self-referent-class)
                                 (s standard-class))
@@ -63,7 +65,7 @@
 
 
 (defun non-trivial-initform-initfunction-p (initform)
-  #+lispworks7.1
+  #+(or lispworks7.1 lispworks8.0)
   (loop :for (name ntifif) :on (flatten initform)
         :thereis (and (eq 'hcl:lambda-name name)
                       (eq 'clos::non-trivial-initform-initfunction ntifif)))
@@ -85,6 +87,7 @@
         (declare (ignore arg))
         `(,function (,lambda (&aux (~self *self-referent-object-self*)) 
                              (declare (special *self-referent-object-self*))
+                             (declare (ignorable ~self))
                              ,@body)))
       ifform))
 
@@ -97,8 +100,7 @@
         (progn
           (remf plist :initfunction)
           `(list ,@plist 
-                 :initfunction ,(make-sr-class-initfunction-form prototype
-                                                                 ifform)))
+                 :initfunction ,(make-sr-class-initfunction-form prototype ifform)))
         (progn
           `(list ,@plist)))))
 
