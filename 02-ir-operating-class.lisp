@@ -6,7 +6,7 @@
 
 (defmetaclass ~ir-operating-class (~instance-recording-class ~operating-class)
   ()
-  (:metaclass standard-class))
+  (:metaclass eclos-class))
 
 
 ;;; *EOF*

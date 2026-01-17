@@ -5,9 +5,9 @@
 
 
 (defmetaclass ~ir-self-referent-operating-class 
-              (~instance-recording-class ~operating-class ~self-referent-class)
+              (~instance-recording-class ~self-referent-class ~operating-class)
   ()
-  (:metaclass standard-class))
+  (:metaclass eclos-class))
 
 
 ;;; *EOF*

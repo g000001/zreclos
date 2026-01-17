@@ -22,17 +22,14 @@
                (:file "02-ir-operating-class")
                (:file "02-self-referent-operating-class")
                (:file "03-attributed-class")
-               (:file "03-lazy-class")
+               (:file "031-lazy-class")
                (:file "03-ir-self-referent-operating-class")
-               (:file "04-ir-attributed-class")
                (:file "04-attributed-lazy-class")
+               (:file "04-ir-attributed-class")
                (:file "04-ir-lazy-class")
                (:file "05-ir-attributed-lazy-class")
                (:file "faceted-slot-class")
-               (:file "test")
-               #||
-               ||#
-               ))
+               (:file "test")))
 
 
 (defmethod perform ((o test-op) (c (eql (find-system :zreclos))))

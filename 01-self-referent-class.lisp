@@ -3,17 +3,13 @@
 
 (in-syntax *zreclos-syntax*)
 
-(defmetaclass ~self-referent-class (standard-class)
+(defmetaclass ~self-referent-class (eclos-class)
   ()
-  (:metaclass standard-class))
+  (:metaclass eclos-class))
 
 
-(defclass ~self-referent-slot-definition (standard-slot-definition)
+(defclass ~self-referent-slot-definition (eclos-slot-definition)
   ())
-
-#|(defmethod validate-superclass ((c ~self-referent-class)
-                                (s standard-class))
-  T)|#
 
 
 (defun make-creator-function-form (slot-form)
@@ -30,15 +26,6 @@
     `(,eval-when ,opts
        (flet (,@(mapcar #'make-creator-function-form slots))
          ,@body))))
-
-
-#|(defclass ~self-referent-object (standard-object) 
-  ()
-  (:metaclass ~self-referent-class))|#
-
-
-#|(defmethod ultimate-ancestor-object-class-given-metaclass ((class (eql '~self-referent-class)))
-  '~self-referent-object)|#
 
 
 (defmethod shared-initialize :around ((instance ~self-referent-object) slot-names &rest initargs)
@@ -61,9 +48,8 @@
       (traverse tree))
     (nreverse list)))
 
-
 (defun non-trivial-initform-initfunction-p (initform)
-  #+lispworks7.1
+  #+(and lispworks7+ (not lispworks7.0))
   (loop :for (name ntifif) :on (flatten initform)
         :thereis (and (eq 'hcl:lambda-name name)
                       (eq 'clos::non-trivial-initform-initfunction ntifif)))

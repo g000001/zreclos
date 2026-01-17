@@ -11,6 +11,10 @@
   'standard-object)
 
 
+(defmethod ultimate-ancestor-object-class-given-metaclass ((class (eql 'cl:standard-class)))
+  'cl:standard-object)
+
+
 (defmacro defmetaclass (name (&rest supers) (&rest slots) &rest opts)
   (let* ((prefix (remove-\"class\"-suffix name))
          (default-supers (or supers '(standard-class)))
@@ -76,5 +80,21 @@
               (declare (ignore initargs))
               (find-class ',eslotd)))))))
 
+
+'(defmetaclass eclos-class ()
+  ()
+  (:slot-definitions-mixin-slots)
+  (:metaclass standard-class))
+
+(progn
+  (finalize-inheritance (zreclos:defclass eclos-class (standard-class) nil (:metaclass standard-class)))
+  (defmethod validate-superclass ((class eclos-class) (super standard-class)) t)
+  (defmethod ultimate-ancestor-object-class-given-metaclass ((class (eql 'eclos-class))) (find-class 'eclos-object))
+  (finalize-inheritance (ensure-class 'eclos-object
+                                      :direct-superclasses
+                                      (mapcar #'ultimate-ancestor-object-class-given-metaclass '(standard-class))
+                                      :metaclass
+                                      'eclos-class))
+  (finalize-inheritance (defclass eclos-slot-definition (standard-slot-definition) nil)))
 
 ;;; *EOF*

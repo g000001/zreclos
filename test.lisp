@@ -37,6 +37,11 @@
   (:metaclass standard-class))
 
 
+(cl:defclass d-class (c-class)
+  ()
+  (:metaclass standard-class))
+
+
 (defmethod validate-superclass ((c c-class) (s standard-class)) T)
 
 
@@ -54,9 +59,7 @@
 
 (test |compute-metaclass test|
   (defconstant <c>
-    (~defclass c (a b)
-      ()
-      (:metaclass c-class))) ;TODO
+    (~defclass c (a b) ()))
   (defparameter *z* (gensym "z"))
   (defparameter *y* (gensym "y"))
   (ensure-class *z* :direct-superclasses (list *y*))
@@ -77,7 +80,7 @@
 (test |self-referent-class test|
   (defun make-point (x y)
     (list x y))
-  (~defclass (horizontal-line :stklos) (~self-referent-object)
+  (~defclass horizontal-line (~self-referent-object)
     ((x1 :accessor x1 :initarg :x1 :type real)
      (x2 :accessor x2 :initarg :x2 :type real)
      (y :accessor y :initarg :y :type real)
@@ -94,8 +97,7 @@
 
 (test |instance-recording-class test|
   (~defclass irobj (~instance-recording-object) 
-    ()
-    (:metaclass ~instance-recording-class))
+    ())
   (~reset-instance-record (find-class 'irobj))
   (let ((size 100))
     (dotimes (i size)
@@ -113,7 +115,7 @@
        (b :initform 0)
        (c :initform 0))
       ;;(:container-types qqq list)
-      (:metaclass ~operating-class)))
+      ))
   (is (equal
        (let ((obj (make-instance 'qqq)))
          (with-slots (a b c) obj
@@ -259,7 +261,9 @@
              '(k 1 2 2 3 3))))
 
 
-;;(run!)
+#+| Do it | (run!)
 
-nil
+
 ;;; *EOF*
+
+

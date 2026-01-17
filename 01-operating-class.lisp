@@ -5,11 +5,11 @@
 (in-syntax *zreclos-syntax*)
 
 
-(defmetaclass ~operating-class (standard-class)
+(defmetaclass ~operating-class (eclos-class)
   ((container-types :initform '(~operating-object)
                     :accessor class-container-types
                     :initarg :container-types))
-  (:metaclass standard-class))
+  (:metaclass eclos-class))
 
 
 (defclass ~operating-slot-definition (standard-slot-definition)

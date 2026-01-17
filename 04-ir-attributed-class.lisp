@@ -4,10 +4,12 @@
 (in-syntax *zreclos-syntax*)
 
 
-(defmetaclass ~ir-attributed-class (~ir-self-referent-operating-class
-                                    ~attributed-class)
+(defmetaclass ~ir-attributed-class (~attributed-class
+                                    ~ir-self-referent-operating-class)
   ()
-  (:metaclass standard-class))
+  (:metaclass eclos-class))
 
 
 ;;; *EOF*
+
+

@@ -8,7 +8,8 @@
   ((default-attributes :initform '()
                        :initarg :default-attributes
                        :accessor ~class-default-attributes))
-  (:metaclass standard-class))
+  (:metaclass eclos-class))
+
 
 (defgeneric ~slot-attribute-using-class (class instance slotd))
 
@@ -133,3 +134,5 @@
 
 
 ;;; *EOF*
+
+

@@ -5,11 +5,10 @@
 
 
 (defmetaclass ~self-referent-operating-class
-              (~operating-class
-               ~self-referent-class)
+              (~self-referent-class ~operating-class)
   ()
   (:slot-definitions-mixin-slots)
-  (:metaclass standard-class))
+  (:metaclass eclos-class))
   
 
 

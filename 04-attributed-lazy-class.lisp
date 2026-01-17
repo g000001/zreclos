@@ -5,11 +5,11 @@
 
 
 (defmetaclass ~attributed-lazy-class
-              (~lazy-class ~attributed-class)
+              (~attributed-class ~lazy-class)
   ()
   (:slot-definitions-mixin-slots)
   (:direct-slot-definitions-mixin-slots)
   (:effective-slot-definitions-mixin-slots)
-  (:metaclass standard-class))
+  (:metaclass eclos-class))
 
 ;;; *EOF*

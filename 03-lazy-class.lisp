@@ -17,7 +17,8 @@
                    :accessor slot-definition-initialization
                    :initarg :initialization))
   (:direct-slot-definitions-mixin-slots)
-  (:effective-slot-definitions-mixin-slots))
+  (:effective-slot-definitions-mixin-slots)
+  (:metaclass eclos-class))
 
 
 (defun process-init-option (opt)

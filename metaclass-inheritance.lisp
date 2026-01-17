@@ -38,13 +38,29 @@
            (| M*(S) | (mapcar (build-transitive-closure #'class-direct-subclasses) | M(S) |))
            ;;and let T be the intersection of the sets composing M*(S)
            (| T | (reduce #'intersection | M*(S) |)))
-      ;;then if T forms a tree according to the subclass relation 
-      (if (and (not (null | T |))
-               (every #'subtypep | T | (cdr | T |)))
-          ;;then the root of T is the metaclass of C
-          (car (reverse | T |))
-          ;;otherwise STANDARD-CLASS is the metaclass of C.
+      ;; terminate the non-direct subclass relations
+      ;;  then if T forms a tree according to the subclass relation 
+      (if (not (null | T |))
+          (let ((root-of-t (find-if (lambda (c1)
+                                      ;; Verify that c1 is not a subclass of any other element in T.
+                                      (not (some (lambda (c2)
+                                                   (and (not (eq c1 c2))
+                                                        (closer-mop:subclassp c1 c2))) ; c1 < c2 ?
+                                                 | T |)))
+                                    | T |)))
+            (or root-of-t (find-class 'standard-class)))
           (find-class 'standard-class)))))
+
+
+(defun subtypep* (sub sup)
+  (when (symbolp sub) (setq sub (find-class sub)))
+  (when (symbolp sup) (setq sup (find-class sup)))
+  (or (subtypep sub sup)
+      (some (lambda (x)
+              (some (lambda (y)
+                      (subtypep y x))
+                    (class-direct-superclasses sub)))
+            (class-direct-superclasses sup))))
 
 
 (defun ensure-class-soft (name)
@@ -142,4 +158,9 @@
       ,@class-options)))
 
 
+()
+
+
 ;;; *EOF*
+
+

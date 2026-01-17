@@ -7,7 +7,7 @@
 (defmetaclass ~ir-lazy-class
               (~ir-self-referent-operating-class ~lazy-class)
   ()
-  (:metaclass standard-class))
+  (:metaclass eclos-class))
 
 
 ;;; *EOF*
