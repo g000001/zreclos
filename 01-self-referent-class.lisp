@@ -3,6 +3,7 @@
 
 (in-syntax *zreclos-syntax*)
 
+
 (defmetaclass ~self-referent-class (eclos-class)
   ()
   (:metaclass eclos-class))
@@ -48,8 +49,10 @@
       (traverse tree))
     (nreverse list)))
 
+
 (defun non-trivial-initform-initfunction-p (initform)
-  #+(and lispworks7+ (not lispworks7.0))
+  (declare (ignorable initform))
+  #+(or lispworks7.1 lispworks8.0)
   (loop :for (name ntifif) :on (flatten initform)
         :thereis (and (eq 'hcl:lambda-name name)
                       (eq 'clos::non-trivial-initform-initfunction ntifif)))
@@ -71,6 +74,7 @@
         (declare (ignore arg))
         `(,function (,lambda (&aux (~self *self-referent-object-self*)) 
                              (declare (special *self-referent-object-self*))
+                             (declare (ignorable ~self))
                              ,@body)))
       ifform))
 
@@ -83,8 +87,7 @@
         (progn
           (remf plist :initfunction)
           `(list ,@plist 
-                 :initfunction ,(make-sr-class-initfunction-form prototype
-                                                                 ifform)))
+                 :initfunction ,(make-sr-class-initfunction-form prototype ifform)))
         (progn
           `(list ,@plist)))))
 
