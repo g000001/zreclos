@@ -16,8 +16,7 @@
 
 (defmetaclass ~instance-recording-class (eclos-class)
   ((instance-record :initform (make-array 0 :adjustable T :fill-pointer 0)
-                    :accessor ~class-instance-record))
-  (:metaclass eclos-class))
+                    :accessor ~class-instance-record)))
 
 
 (defmethod make-instance :around 

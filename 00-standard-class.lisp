@@ -89,7 +89,8 @@
 (progn
   (finalize-inheritance (zreclos:defclass eclos-class (standard-class) nil (:metaclass standard-class)))
   (defmethod validate-superclass ((class eclos-class) (super standard-class)) t)
-  (defmethod ultimate-ancestor-object-class-given-metaclass ((class (eql 'eclos-class))) (find-class 'eclos-object))
+  (defmethod ultimate-ancestor-object-class-given-metaclass ((class (eql 'eclos-class)))
+    (find-class 'eclos-object))
   (finalize-inheritance (ensure-class 'eclos-object
                                       :direct-superclasses
                                       (mapcar #'ultimate-ancestor-object-class-given-metaclass '(standard-class))

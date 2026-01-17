@@ -8,8 +8,7 @@
 (defmetaclass ~operating-class (eclos-class)
   ((container-types :initform '(~operating-object)
                     :accessor class-container-types
-                    :initarg :container-types))
-  (:metaclass eclos-class))
+                    :initarg :container-types)))
 
 
 (defclass ~operating-slot-definition (standard-slot-definition)

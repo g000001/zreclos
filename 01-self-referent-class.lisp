@@ -5,8 +5,7 @@
 
 
 (defmetaclass ~self-referent-class (eclos-class)
-  ()
-  (:metaclass eclos-class))
+  ())
 
 
 (defclass ~self-referent-slot-definition (eclos-slot-definition)
@@ -51,8 +50,7 @@
 
 
 (defun non-trivial-initform-initfunction-p (initform)
-  (declare (ignorable initform))
-  #+(or lispworks7.1 lispworks8.0)
+  #+(or lispworks7.1 lispworks8.0 lispworks8.1)
   (loop :for (name ntifif) :on (flatten initform)
         :thereis (and (eq 'hcl:lambda-name name)
                       (eq 'clos::non-trivial-initform-initfunction ntifif)))
