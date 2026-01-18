@@ -23,7 +23,7 @@
   (length (class-slots class)))
 
 
-(defmetaclass ~faceted-slot-class () ())
+(~defmetaclass ~faceted-slot-class () ())
 
 
 (defmethod ~compute-instance-size ((class ~faceted-slot-class))

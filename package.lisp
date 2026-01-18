@@ -16,6 +16,9 @@
    defclass
    defclass-eclos
    defclass-stklos
+   defmetaclass
+   define-metaclass
+   ultimate-ancestor-object-class-given-metaclass
    self)
   (:export
    operating-class

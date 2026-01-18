@@ -4,7 +4,7 @@
 (in-syntax *zreclos-syntax*)
 
 
-(defmetaclass ~ir-attributed-lazy-class
+(~defmetaclass ~ir-attributed-lazy-class
               (~ir-lazy-class ~ir-attributed-class ~attributed-lazy-class)
   ()
   (:metaclass eclos-class))

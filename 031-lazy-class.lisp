@@ -10,7 +10,7 @@
   method)
 
 
-(defmetaclass ~lazy-class (~self-referent-operating-class)
+(~defmetaclass ~lazy-class (~self-referent-operating-class)
   ()
   (:slot-definitions-mixin-slots
    (initialization :initform (make-slot-init)

@@ -4,7 +4,7 @@
 (in-syntax *zreclos-syntax*)
 
 
-(defmetaclass ~attributed-class (~self-referent-operating-class)
+(~defmetaclass ~attributed-class (~self-referent-operating-class)
   ((default-attributes :initform '()
                        :initarg :default-attributes
                        :accessor ~class-default-attributes))

@@ -4,18 +4,18 @@
 (in-syntax *zreclos-syntax*)
 
 
-(defgeneric ultimate-ancestor-object-class-given-metaclass (class))
+(defgeneric ~ultimate-ancestor-object-class-given-metaclass (class))
 
 
-(defmethod ultimate-ancestor-object-class-given-metaclass ((class (eql 'standard-class)))
+(defmethod ~ultimate-ancestor-object-class-given-metaclass ((class (eql 'standard-class)))
   'standard-object)
 
 
-(defmethod ultimate-ancestor-object-class-given-metaclass ((class (eql 'cl:standard-class)))
+(defmethod ~ultimate-ancestor-object-class-given-metaclass ((class (eql 'cl:standard-class)))
   'cl:standard-object)
 
 
-(defmacro defmetaclass (name (&rest supers) (&rest slots) &rest opts)
+(defmacro ~defmetaclass (name (&rest supers) (&rest slots) &rest opts)
   (let* ((prefix (remove-\"class\"-suffix name))
          (default-supers (or supers '(standard-class)))
          (defeslotds (find :effective-slot-definitions-mixin-slots
@@ -45,13 +45,13 @@
                                                     (super ,s))
                       T))
                  default-supers)
-       (defmethod ultimate-ancestor-object-class-given-metaclass 
+       (defmethod ~ultimate-ancestor-object-class-given-metaclass 
                   ((class (eql ',name)))
          (find-class ',(symbolconc prefix '-object)))
        (finalize-inheritance
         (ensure-class ',(symbolconc prefix '-object)
                       :direct-superclasses 
-                      (mapcar #'ultimate-ancestor-object-class-given-metaclass ',default-supers)
+                      (mapcar #'~ultimate-ancestor-object-class-given-metaclass ',default-supers)
                       :metaclass ',name))
        ,@(and 
           defslotds
@@ -81,6 +81,8 @@
               (find-class ',eslotd)))))))
 
 
+(setf (macro-function '~define-metaclass) (macro-function '~defmetaclass))
+
 '(defmetaclass eclos-class ()
   ()
   (:slot-definitions-mixin-slots)
@@ -89,11 +91,11 @@
 (progn
   (finalize-inheritance (zreclos:defclass eclos-class (standard-class) nil (:metaclass standard-class)))
   (defmethod validate-superclass ((class eclos-class) (super standard-class)) t)
-  (defmethod ultimate-ancestor-object-class-given-metaclass ((class (eql 'eclos-class)))
+  (defmethod ~ultimate-ancestor-object-class-given-metaclass ((class (eql 'eclos-class)))
     (find-class 'eclos-object))
   (finalize-inheritance (ensure-class 'eclos-object
                                       :direct-superclasses
-                                      (mapcar #'ultimate-ancestor-object-class-given-metaclass '(standard-class))
+                                      (mapcar #'~ultimate-ancestor-object-class-given-metaclass '(standard-class))
                                       :metaclass
                                       'eclos-class))
   (finalize-inheritance (defclass eclos-slot-definition (standard-slot-definition) nil)))

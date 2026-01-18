@@ -5,7 +5,7 @@
 (in-syntax *zreclos-syntax*)
 
 
-(defmetaclass ~operating-class (eclos-class)
+(~defmetaclass ~operating-class (eclos-class)
   ((container-types :initform '(~operating-object)
                     :accessor class-container-types
                     :initarg :container-types)))

@@ -4,7 +4,7 @@
 (in-syntax *zreclos-syntax*)
 
 
-(defmetaclass ~self-referent-class (eclos-class)
+(~defmetaclass ~self-referent-class (eclos-class)
   ())
 
 

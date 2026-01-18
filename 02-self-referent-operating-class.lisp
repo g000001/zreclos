@@ -4,7 +4,7 @@
 (in-syntax *zreclos-syntax*)
 
 
-(defmetaclass ~self-referent-operating-class
+(~defmetaclass ~self-referent-operating-class
               (~self-referent-class ~operating-class)
   ()
   (:slot-definitions-mixin-slots)

@@ -4,7 +4,7 @@
 (in-syntax *zreclos-syntax*)
 
 
-(defmetaclass ~attributed-lazy-class
+(~defmetaclass ~attributed-lazy-class
               (~attributed-class ~lazy-class)
   ()
   (:slot-definitions-mixin-slots)
