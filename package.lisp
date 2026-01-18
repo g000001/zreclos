@@ -70,7 +70,17 @@
   (:export
    required-slot-class
    direct-required-slots
-   class-required-slots))
+   class-required-slots)
+  (:export
+   faceted-slot-class
+   faceted-slot-object
+   index-in-instance
+   compute-instance-size
+   faceted-slot-instance-access
+   standard-instance-boundp
+   slot-facet
+   facet-unbound
+   facet-missing))
 
 
 (defpackage zreclos-user
