@@ -28,7 +28,7 @@
                (:file "04-ir-attributed-class")
                (:file "04-ir-lazy-class")
                (:file "05-ir-attributed-lazy-class")
-               ;;(:file "faceted-slot-class")
+               (:file "faceted-slot-class")
                (:file "test")))
 
 
