@@ -4,6 +4,9 @@
 (in-syntax *zreclos-syntax*)
 
 
+(defvar *self-referent-object-self*)
+
+
 (~defmetaclass ~self-referent-class (eclos-class)
   ())
 
